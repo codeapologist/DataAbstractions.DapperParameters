@@ -6,12 +6,18 @@ using System.Linq.Expressions;
 
 namespace DataAbstractions.DapperParameters
 {
-    public class ParameterBuilder
+    public interface IParameterBuilder<T>
     {
-        private readonly object _objContext;
+        //Empty interface
+    }
+
+
+    public class ParameterBuilder<T> : IParameterBuilder<T>
+    {
+        private readonly T _objContext;
         private Dictionary<string, object> _parameterDictionary = new Dictionary<string, object>();
 
-        public ParameterBuilder(object objContext)
+        public ParameterBuilder(T objContext)
         {
             _objContext = objContext;
             AddObjectProperties(_objContext);
@@ -21,7 +27,7 @@ namespace DataAbstractions.DapperParameters
         {
             var dictionary = obj.ToDictionary();
 
-            dictionary.ToList().ForEach(x => _parameterDictionary.Add(x.Key, x.Value));
+            dictionary.ToList().ForEach(x => _parameterDictionary.Add(x.Key.ToLowerInvariant(), x.Value));
         }
 
         public void Add(string key, object value)
@@ -46,21 +52,21 @@ namespace DataAbstractions.DapperParameters
         {
             var normalizedKey = key.ToLowerInvariant();
 
-            if (_parameterDictionary.ContainsKey(normalizedKey))
+            if (!_parameterDictionary.ContainsKey(normalizedKey))
             {
-                _parameterDictionary[normalizedKey] = value;
+                throw new InvalidOperationException($"Cannot replace parameter. Key does not exist: {key}");
             }
 
-            throw new InvalidOperationException($"Cannot replace parameter. Key does not exist: {key}");
+            _parameterDictionary[normalizedKey] = value;
+            return;
         }
 
-        public string GetKeyFromExpression<T, P>(Expression<Func<T, P>> propertyExpression)
+        public string GetKeyFromExpression<TSource, TProperty>(Expression<Func<TSource, TProperty>> propertyLambda)
         {
-            var expression = (MemberExpression)propertyExpression.Body;
-            return expression.Member.Name;
+            return (propertyLambda.Body as MemberExpression ?? ((UnaryExpression)propertyLambda.Body).Operand as MemberExpression).Member.Name;
         }
 
-        public DynamicParameters Create()
+        public DynamicParameters CreateParameters()
         {
             return new DynamicParameters(_parameterDictionary);
         }
