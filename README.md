@@ -23,4 +23,6 @@ var parameters = myObject.BuildParameters()
                          .Remove(x => x.Name)
                          .Replace(x => x.ModifiedDate, DateTime.Now)
                          .Create();
+
+connection.Execute("myStoredProcedure", parameters, commandType: CommandType.StoredProcedure);                         
 ```
