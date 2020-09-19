@@ -48,7 +48,7 @@ namespace DataAbstractions.DapperParameters
         {
             if (!(builder is ParameterBuilder<T> pb))
             {
-                throw new ArgumentException("Argument needs to be of type ParameterBuilder", nameof(builder));
+                throw new ArgumentException($"Argument needs to be of type ParameterBuilder", nameof(builder));
             }
 
             return pb;
