@@ -6,21 +6,16 @@ using System.Linq.Expressions;
 
 namespace DataAbstractions.DapperParameters
 {
-    public interface IParameterBuilder<T>
-    {
-        //Empty interface
-    }
-
-
     public class ParameterBuilder<T> : IParameterBuilder<T>
     {
-        private readonly T _objContext;
-        private Dictionary<string, object> _parameterDictionary = new Dictionary<string, object>();
+        protected readonly T _obj;
+        protected Dictionary<string, object> _parameterDictionary = new Dictionary<string, object>();
 
-        public ParameterBuilder(T objContext)
+
+        public ParameterBuilder(T obj)
         {
-            _objContext = objContext;
-            AddObjectProperties(_objContext);
+            _obj = obj;
+            AddObjectProperties(_obj);
         }
 
         public void AddObjectProperties(object obj)
@@ -30,7 +25,7 @@ namespace DataAbstractions.DapperParameters
             dictionary.ToList().ForEach(x => _parameterDictionary.Add(x.Key.ToLowerInvariant(), x.Value));
         }
 
-        public void Add(string key, object value)
+        public IParameterBuilder<T> Add(string key, object value)
         {
             if (_parameterDictionary.ContainsKey(key.ToLowerInvariant()))
             {
@@ -38,9 +33,29 @@ namespace DataAbstractions.DapperParameters
             }
 
             _parameterDictionary.Add(key.ToLowerInvariant(), value);
+
+            return this;
         }
 
-        public void Remove(string key)
+        public IParameterBuilder<T> TryAdd(string key, object value)
+        {
+            if (!_parameterDictionary.ContainsKey(key.ToLowerInvariant()))
+            {
+                _parameterDictionary.Add(key.ToLowerInvariant(), value);
+            }
+
+            return this;
+        }
+
+        public IParameterBuilder<T> Remove(Expression<Func<T, object>> propertyExpression)
+        {
+            var key = GetKeyFromExpression(propertyExpression);
+            RemoveInternal(key);
+
+            return this;
+        }
+
+        protected void RemoveInternal(string key)
         {
             if (_parameterDictionary.ContainsKey(key.ToLowerInvariant()))
             {
@@ -48,7 +63,15 @@ namespace DataAbstractions.DapperParameters
             }
         }
 
-        public void Replace(string key, object value)
+        public IParameterBuilder<T> Replace(Expression<Func<T, object>> propertyExpression, object value)
+        {
+            var key = GetKeyFromExpression(propertyExpression);
+            ReplaceInternal(key, value);
+
+            return this;
+        }
+
+        protected void ReplaceInternal(string key, object value)
         {
             var normalizedKey = key.ToLowerInvariant();
 
@@ -66,7 +89,7 @@ namespace DataAbstractions.DapperParameters
             return (propertyLambda.Body as MemberExpression ?? ((UnaryExpression)propertyLambda.Body).Operand as MemberExpression).Member.Name;
         }
 
-        public DynamicParameters CreateParameters()
+        public DynamicParameters Create()
         {
             return new DynamicParameters(_parameterDictionary);
         }

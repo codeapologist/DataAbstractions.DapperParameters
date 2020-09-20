@@ -4,8 +4,15 @@ using Xunit;
 
 namespace DataAbstractions.DapperParameters.Tests
 {
-    public class FluentParameterExtensionsShould
+    public class ParameterFactoryShould
     {
+        public ParameterFactory _parameterFactory { get; }
+
+        public ParameterFactoryShould()
+        {
+            _parameterFactory = new ParameterFactory();
+        }
+
         [Fact]
         public void IncludeAllPropertiesOfSourceObject()
         {
@@ -16,7 +23,8 @@ namespace DataAbstractions.DapperParameters.Tests
                 BoolProperty = true
             };
 
-            var parameters = sourceObject.BuildParameters().Create();
+
+            var parameters = _parameterFactory.Parameterize(sourceObject).Create();
 
             var expected = new DynamicParameters();
             expected.Add(nameof(sourceObject.IntegerProperty).ToLowerInvariant(), sourceObject.IntegerProperty);
@@ -38,7 +46,7 @@ namespace DataAbstractions.DapperParameters.Tests
                 BoolProperty = true
             };
 
-            var parameters = sourceObject.BuildParameters()
+            var parameters = _parameterFactory.Parameterize(sourceObject)
                 .Add("NewParameter", "New Value")
                 .Create();
 
@@ -63,7 +71,7 @@ namespace DataAbstractions.DapperParameters.Tests
                 BoolProperty = true
             };
 
-            var parameters = sourceObject.BuildParameters()
+            var parameters = _parameterFactory.Parameterize(sourceObject)
                 .Remove(x => x.IntegerProperty)
                 .Create();
 
@@ -86,7 +94,7 @@ namespace DataAbstractions.DapperParameters.Tests
                 BoolProperty = true
             };
 
-            var parameters = sourceObject.BuildParameters()
+            var parameters = _parameterFactory.Parameterize(sourceObject)
                 .Replace(x => x.StringProperty, "Updated")
                 .Create();
 
@@ -101,10 +109,4 @@ namespace DataAbstractions.DapperParameters.Tests
         }
     }
 
-    public class ExampleClass
-    {
-        public int IntegerProperty { get; set; }
-        public string StringProperty { get; set; }
-        public bool BoolProperty { get; set; }
-    }
 }

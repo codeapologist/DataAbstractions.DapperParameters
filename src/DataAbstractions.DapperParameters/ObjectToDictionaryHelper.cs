@@ -16,7 +16,7 @@ namespace DataAbstractions.DapperParameters
 
             var dictionary = new Dictionary<string, T>();
             foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(source))
-                AddPropertyToDictionary<T>(property, source, dictionary);
+                AddPropertyToDictionary(property, source, dictionary);
             return dictionary;
         }
 

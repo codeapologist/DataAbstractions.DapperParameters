@@ -1,8 +1,8 @@
 # DataAbstractions.DapperParameters 
 
-A library to easily build Dapper dynamic parameters using a Fluent API.
+### A library for building Dapper dynamic parameters with a simple a fluent API.
 
-Start building parameters from any object with the .BuildParameters() extension method
+CreateParameters() extension method will turn each property into a dynamic parameter using the property name and value.
 ```csharp
 public class MyObject
 {
@@ -11,14 +11,14 @@ public class MyObject
     public DateTime ModifiedDate { get; set; }
 }
 ```
-Each property will turned into a dynamic parameter using the property name and value.
+
 ```csharp
-var parameters = myObject.BuildParameters().Create();
+var parameters = myObject.CreateParameters();
 ```
 
-Add, remove, and replace parameters using a fluent syntax.
+To customize parameters, use Parameterize() to add, remove, and replace with a fluent syntax.
 ```csharp
-var parameters = myObject.BuildParameters()
+var parameters = myObject.Parameterize()
                          .Add("NewId", myIdentifier)
                          .Remove(x => x.Name)
                          .Replace(x => x.ModifiedDate, DateTime.Now)
@@ -26,3 +26,7 @@ var parameters = myObject.BuildParameters()
 
 connection.Execute("myStoredProcedure", parameters, commandType: CommandType.StoredProcedure);                         
 ```
+
+TODO:
+- Document IParameterFactory interface
+- Create fluent API for customizing and creating Table Valued Parameters
