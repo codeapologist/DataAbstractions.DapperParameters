@@ -8,6 +8,12 @@ using static Dapper.SqlMapper;
 
 namespace DataAbstractions.DapperParameters
 {
+    public interface IParameterFactory
+    {
+        IParameterBuilder<T> Parameterize<T>(T obj);
+    }
+
+
     public class ParameterFactory : IParameterFactory
     {
         public IParameterBuilder<T> Parameterize<T>(T obj)

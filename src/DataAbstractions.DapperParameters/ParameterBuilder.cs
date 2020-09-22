@@ -6,6 +6,16 @@ using System.Linq.Expressions;
 
 namespace DataAbstractions.DapperParameters
 {
+
+    public interface IParameterBuilder<T>
+    {
+        IParameterBuilder<T> Add(string key, object value);
+        IParameterBuilder<T> TryAdd(string key, object value);
+        IParameterBuilder<T> Remove(Expression<Func<T, object>> propertyExpression);
+        IParameterBuilder<T> Replace(Expression<Func<T, object>> propertyExpression, object value);
+        DynamicParameters Create();
+    }
+
     public class ParameterBuilder<T> : IParameterBuilder<T>
     {
         protected readonly T _obj;
