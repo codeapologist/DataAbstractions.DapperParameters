@@ -36,7 +36,7 @@ An **IParameterFactory** interface is available for projects leveraging dependen
 ```csharp
 IParameterFactory parameterFactory = new ParameterFactory();
 
-var parameters = parameterFactory.Parameterize()
+var parameters = parameterFactory.Parameterize(myObject)
                          .Add("NewId", myIdentifier)
                          .Remove(x => x.Name)
                          .Replace(x => x.ModifiedDate, DateTime.Now)
