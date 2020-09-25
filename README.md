@@ -31,7 +31,7 @@ connection.Execute("myStoredProcedure", parameters, commandType: CommandType.Sto
 
 ## IParameterBuilder Interface
 
-An **IParameterFactory** interface is available for projects leveraging dependency injection. This interface has the same API method signatures as the extension method above.  
+An **IParameterFactory** interface is available for projects leveraging dependency injection. This interface has the same API method signatures as the extension methods above.  
 
 ```csharp
 IParameterFactory parameterFactory = new ParameterFactory();
