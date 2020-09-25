@@ -6,7 +6,7 @@ namespace DataAbstractions.DapperParameters.Tests
 {
     public class ParameterFactoryShould
     {
-        public ParameterFactory _parameterFactory { get; }
+        public IParameterFactory _parameterFactory { get; }
 
         public ParameterFactoryShould()
         {
@@ -24,7 +24,7 @@ namespace DataAbstractions.DapperParameters.Tests
             };
 
 
-            var parameters = _parameterFactory.Parameterize(sourceObject).Create();
+            var parameters = _parameterFactory.CreateParameters(sourceObject);
 
             var expected = new DynamicParameters();
             expected.Add(nameof(sourceObject.IntegerProperty).ToLowerInvariant(), sourceObject.IntegerProperty);

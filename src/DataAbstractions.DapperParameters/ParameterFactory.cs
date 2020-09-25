@@ -10,12 +10,19 @@ namespace DataAbstractions.DapperParameters
 {
     public interface IParameterFactory
     {
+        DynamicParameters CreateParameters<T>(T obj);
         IParameterBuilder<T> Parameterize<T>(T obj);
     }
 
 
     public class ParameterFactory : IParameterFactory
     {
+        public DynamicParameters CreateParameters<T>(T obj)
+        {
+            var builder = new ParameterBuilder<T>(obj);
+            return builder.Create();
+        }
+
         public IParameterBuilder<T> Parameterize<T>(T obj)
         {
             return new ParameterBuilder<T>(obj);
