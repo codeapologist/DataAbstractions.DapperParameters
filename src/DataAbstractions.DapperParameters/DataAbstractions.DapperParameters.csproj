@@ -1,7 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Codeapologist</Authors>
+    <Description>A library for building Dapper dynamic parameters with a simple a fluent API.</Description>
+    <RepositoryUrl>https://github.com/codeapologist/DataAbstractions.DapperParameters</RepositoryUrl>
+    <PackageTags>Dapper DynamicParameters Fluent</PackageTags>
+    <PackageReleaseNotes>Initial release</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
