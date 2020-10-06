@@ -44,5 +44,38 @@ var parameters = parameterFactory.Parameterize(myObject)
 
 ```
 
+## Add Your Own Fluent Methods
+
+You can define your own fluent api with extension methods.  The following example adds a LastModified parameter.
+
+```csharp
+
+    public static class MyParameterBuilderExtensions
+    {
+        public static IParameterBuilder<T> AddLastModified<T>(this IParameterBuilder<T> parameterBuilder)
+        {
+            //Cast to ParameterBuilder<T>
+            var builder = (ParameterBuilder<T>)parameterBuilder; 
+
+            //Add tells the builder to add this parameter key and value
+            builder.Add("LastModified", DateTime.Now);
+
+            //Return the builder
+            return builder;
+        }
+    }
+```
+
+Use the new fluent method and create the dynamic parameter: 
+
+```csharp
+IParameterFactory parameterFactory = new ParameterFactory();
+
+var parameters = parameterFactory.Parameterize(myObject)
+                         .AddLastModified()
+                         .Create();
+
+```
+
 TODO:
 - Create fluent API for customizing and creating Table Valued Parameters
