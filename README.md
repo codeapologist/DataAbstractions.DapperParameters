@@ -23,7 +23,7 @@ To customize parameters, use Parameterize() to add, remove, and replace with a f
 var parameters = myObject.Parameterize()
                          .Add("NewId", myIdentifier)
                          .Remove(x => x.Name)
-                         .Replace(x => x.ModifiedDate, DateTime.Now)
+                         .Update(x => x.ModifiedDate, DateTime.Now)
                          .Create();
 
 connection.Execute("myStoredProcedure", parameters, commandType: CommandType.StoredProcedure);                         
@@ -39,7 +39,7 @@ IParameterFactory parameterFactory = new ParameterFactory();
 var parameters = parameterFactory.Parameterize(myObject)
                          .Add("NewId", myIdentifier)
                          .Remove(x => x.Name)
-                         .Replace(x => x.ModifiedDate, DateTime.Now)
+                         .Update(x => x.ModifiedDate, DateTime.Now)
                          .Create();
 
 ```
@@ -57,7 +57,7 @@ You can define your own fluent api with extension methods.  The following exampl
             //Cast to ParameterBuilder<T>
             var builder = (ParameterBuilder<T>)parameterBuilder; 
 
-            //Add tells the builder to add this parameter key and value
+            //"Add" tells the builder to add this parameter key and value
             builder.Add("LastModified", DateTime.Now);
 
             //Return the builder
@@ -78,4 +78,6 @@ var parameters = parameterFactory.Parameterize(myObject)
 ```
 
 TODO:
-- Create fluent API for customizing and creating Table Valued Parameters
+- [x] Add Rename fluent method
+- [ ] Create fluent API for customizing and creating Table Valued Parameters
+- [ ] Document all the built-in fluent methods

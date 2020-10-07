@@ -77,7 +77,7 @@ namespace DataAbstractions.DapperParameters.Tests
         }
 
         [Fact]
-        public void UpdateReplacedProperties()
+        public void ModifyUpdatedProperties()
         {
             var sourceObject = new ExampleClass
             {
@@ -87,13 +87,39 @@ namespace DataAbstractions.DapperParameters.Tests
             };
 
             var parameters = sourceObject.Parameterize()
-                .Replace(x => x.StringProperty, "Updated")
+                .Update(x => x.StringProperty, "Updated")
                 .Create();
 
             var expected = new DynamicParameters();
             expected.Add(nameof(sourceObject.IntegerProperty).ToLowerInvariant(), sourceObject.IntegerProperty);
             expected.Add(nameof(sourceObject.StringProperty).ToLowerInvariant(), "Updated");
             expected.Add(nameof(sourceObject.BoolProperty).ToLowerInvariant(), sourceObject.BoolProperty);
+
+            parameters.Should().BeOfType<DynamicParameters>();
+            parameters.Should().BeEquivalentTo(expected);
+
+        }
+
+        [Fact]
+        public void RenameParameterKey()
+        {
+            var sourceObject = new ExampleClass
+            {
+                IntegerProperty = 123,
+                StringProperty = "Some Text",
+                BoolProperty = true
+            };
+
+            var newName = "NewName";
+
+            var parameters = sourceObject.Parameterize()
+                .Rename(x => x.BoolProperty, newName)
+                .Create();
+
+            var expected = new DynamicParameters();
+            expected.Add(nameof(sourceObject.IntegerProperty).ToLowerInvariant(), sourceObject.IntegerProperty);
+            expected.Add(nameof(sourceObject.StringProperty).ToLowerInvariant(), sourceObject.StringProperty);
+            expected.Add(newName.ToLowerInvariant(), sourceObject.BoolProperty);
 
             parameters.Should().BeOfType<DynamicParameters>();
             parameters.Should().BeEquivalentTo(expected);

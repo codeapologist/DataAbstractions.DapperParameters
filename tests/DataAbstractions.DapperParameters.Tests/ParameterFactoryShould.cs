@@ -95,7 +95,7 @@ namespace DataAbstractions.DapperParameters.Tests
             };
 
             var parameters = _parameterFactory.Parameterize(sourceObject)
-                .Replace(x => x.StringProperty, "Updated")
+                .Update(x => x.StringProperty, "Updated")
                 .Create();
 
             var expected = new DynamicParameters();

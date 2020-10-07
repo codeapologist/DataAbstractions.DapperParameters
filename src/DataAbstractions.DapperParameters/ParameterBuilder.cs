@@ -12,7 +12,8 @@ namespace DataAbstractions.DapperParameters
         IParameterBuilder<T> Add(string key, object value);
         IParameterBuilder<T> TryAdd(string key, object value);
         IParameterBuilder<T> Remove(Expression<Func<T, object>> propertyExpression);
-        IParameterBuilder<T> Replace(Expression<Func<T, object>> propertyExpression, object value);
+        IParameterBuilder<T> Update(Expression<Func<T, object>> propertyExpression, object value);
+        IParameterBuilder<T> Rename(Expression<Func<T, object>> propertyExpression, string name);
         DynamicParameters Create();
     }
 
@@ -73,24 +74,48 @@ namespace DataAbstractions.DapperParameters
             }
         }
 
-        public IParameterBuilder<T> Replace(Expression<Func<T, object>> propertyExpression, object value)
+        public IParameterBuilder<T> Update(Expression<Func<T, object>> propertyExpression, object value)
         {
             var key = GetKeyFromExpression(propertyExpression);
-            ReplaceInternal(key, value);
+            UpdateInternal(key, value);
 
             return this;
         }
 
-        protected void ReplaceInternal(string key, object value)
+        protected void UpdateInternal(string key, object value)
         {
             var normalizedKey = key.ToLowerInvariant();
 
             if (!_parameterDictionary.ContainsKey(normalizedKey))
             {
-                throw new InvalidOperationException($"Cannot replace parameter. Key does not exist: {key}");
+                throw new InvalidOperationException($"Cannot update parameter. Key does not exist: {key}");
             }
 
             _parameterDictionary[normalizedKey] = value;
+            return;
+        }
+
+        public IParameterBuilder<T> Rename(Expression<Func<T, object>> propertyExpression, string name)
+        {
+            var key = GetKeyFromExpression(propertyExpression);
+            RenameInternal(key, name);
+
+            return this;
+        }
+
+        protected void RenameInternal(string key, string name)
+        {
+            var normalizedKey = key.ToLowerInvariant();
+
+            if (!_parameterDictionary.ContainsKey(normalizedKey))
+            {
+                throw new InvalidOperationException($"Rename error. Key does not exist: {key}");
+            }
+
+            var value = _parameterDictionary[normalizedKey];
+            _parameterDictionary.Add(name.ToLowerInvariant(), value);
+            _parameterDictionary.Remove(normalizedKey);
+
             return;
         }
 
@@ -103,6 +128,7 @@ namespace DataAbstractions.DapperParameters
         {
             return new DynamicParameters(_parameterDictionary);
         }
+
 
     }
 }
