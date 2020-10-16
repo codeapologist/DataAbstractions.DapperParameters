@@ -29,7 +29,7 @@ var parameters = myObject.Parameterize()
 connection.Execute("myStoredProcedure", parameters, commandType: CommandType.StoredProcedure);                         
 ```
 
-## IParameterBuilder Interface
+## IParameterFactory Interface
 
 An **IParameterFactory** interface is available for projects leveraging dependency injection. This interface has the same API method signatures as the extension methods above.  
 
